@@ -1,0 +1,31 @@
+service: jenkins-trigger
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  environment:
+    SLACK_JENKINS_USER: ${env:SLACK_JENKINS_USER}
+    SLACK_JENKINS_PASSWORD: ${env:SLACK_JENKINS_PASSWORD}
+    SLACK_ENDPOINT: ${env:SLACK_ENDPOINT}
+
+plugins:
+  - serverless-offline
+
+functions:
+  app:
+    timeout: 180
+    memory: 512
+    handler: index.handler
+    events:
+      - http: 
+          path: /
+          method: ANY
+          cors:
+            origin: '*'
+            allowCredentials: false
+      - http: 
+          path: '{proxy+}'
+          method: ANY
+          cors:
+            origin: '*'
+            allowCredentials: false
